@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/static/index.css">
+    <link rel="stylesheet" type="text/css" href="/static/room.css">
+    <meta charset="UTF-8">
+    <title>Room #{{ roomno }}</title>
+</head>
+<body>
+<div>
+    {% if user['is_teacher']%} <span class="room-number">Room #: {{ roomno }}</span>{% endif %}
+    <div class="room-info">Welcome, {{ user['name'] }} {% if not user['is_teacher']%}| Teacher: {{ room['teacher'] }}{% endif %}</div>
+    <div>
+        <h1>Chat:</h1>
+        {% if user['is_teacher']%}
+        <div id="controls">
+            <a href="/delete/{{ roomno }}">Delete Room</a>
+        </div>
+        {% endif %}
+        <div id="chat-wrapper">
+            <div id="chat-box">
+            </div>
+            <div id="users-list">
+                <span id="user-count">{{ room['users']|length }}</span> active users
+                <hr>
+                {% for u in room['users'] %}
+                <div id="users">{{ u }}<br></div>
+                {% endfor %}
+            </div>
+        </div>
+        <form onsubmit="sendMessage();return false">
+            <!--<input type="hidden" name="user" value="{{ user['id'] }}">-->
+            <input type="text" name="message" value="" id="message" class="biginput" autocomplete="off">
+            <input onclick="sendMessage();" type="submit" value="Send">
+        </form>
+    </div>
+</div>
+</body>
+<script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
+<script type="text/javascript" charset="utf-8">
+    var name = "{{ user['name'] }}";
+    var room = "{{ roomno }}";
+</script>
+<script src="/static/room.js"></script>
+</html>
