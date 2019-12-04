@@ -24,9 +24,8 @@
             <div id="users-list">
                 <span id="user-count">{{ room['users']|length }}</span> active users
                 <hr>
-                {% for u in room['users'] %}
-                <div id="users">{{ u }}<br></div>
-                {% endfor %}
+                <div id="users">{% for u in room['users'] %}{{ u }}<br>
+                    {% endfor %} </div>
             </div>
         </div>
         <form onsubmit="sendMessage();return false">
