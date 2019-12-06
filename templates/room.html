@@ -9,15 +9,20 @@
 </head>
 <body>
 <div>
-    {% if user['is_teacher']%} <span class="room-number">Room #: {{ roomno }}</span>{% endif %}
+     <span class="room-number">{% if user['is_teacher']%}Room #: {{ roomno }}{% endif %}</span>
+    <!-- this leaves a blank span if there is no teacjer. this is on purpose becuase this is coded badly pls do no remove-->
     <div class="room-info">Welcome, {{ user['name'] }} {% if not user['is_teacher']%}| Teacher: {{ room['teacher'] }}{% endif %}</div>
     <div>
         <h1>Chat:</h1>
-        {% if user['is_teacher']%}
+
         <div id="controls">
+            {% if user['is_teacher']%}
             <a href="/delete/{{ roomno }}">Delete Room</a>
+            {% else %}
+            <a onclick="leaveRoom()">Leave Room</a>
+            {% endif %}
         </div>
-        {% endif %}
+
         <div id="chat-wrapper">
             <div id="chat-box">
             </div>

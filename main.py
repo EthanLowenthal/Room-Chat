@@ -80,7 +80,7 @@ def delete(roomno):
         db.session.commit()
         socketio.emit('room_deleted', None, room=str(roomno))
         session['user'] = None
-        close_room(str(roomno))
+        socketio.close_room(str(roomno))
 
     return redirect("/")
 
@@ -139,17 +139,18 @@ def create():
 
         return redirect(f'/room/{roomno}')
 
-@socketio.on('connection')
-def new_connection(json):
+@socketio.on('leave')
+def leave(json):
+    User.query.filter_by(id=session['user']).delete()
+    db.session.commit()
+    session['user'] = None
+    leave_room(json["room"])
+    emit('disconnection', {"name":json["name"]}, room=json["room"])
+
+@socketio.on('join')
+def join(json):
     join_room(json["room"])
-    emit('new_connection', {"name":json["name"]}, room=json["room"])
-
-# @socketio.on('disconnect')
-# def disconnection(json):
-#     print(json["name"])
-#     emit('disconnection', {"name":json["name"]}, room=json["room"])
-#     leave_room(json["room"])
-
+    emit('connection', {"name":json["name"]}, room=json["room"])
 
 @socketio.on('message')
 def new_message(json):
