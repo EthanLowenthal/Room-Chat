@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, session
 import time
 from flask_sqlalchemy import SQLAlchemy
-from flask_socketio import SocketIO, emit, join_room, leave_room, send
+from flask_socketio import SocketIO, emit, join_room, leave_room, send, close_room
 
 
 app = Flask(__name__)
@@ -63,7 +63,9 @@ def room(roomno):
     if user is None:
         return redirect("/")
     elif str(user.room_id) == str(roomno):
-        return render_template("room.html", roomno=roomno, user=user.serialize, room=user.room.serialize)
+        room = user.room.serialize
+        room['users'].pop(-1)
+        return render_template("room.html", roomno=roomno, user=user.serialize, room=room)
     return redirect("/")
 
 
@@ -78,7 +80,7 @@ def delete(roomno):
         db.session.commit()
         socketio.emit('room_deleted', None, room=str(roomno))
         session['user'] = None
-        leave_room(str(roomno))
+        close_room(str(roomno))
 
     return redirect("/")
 
