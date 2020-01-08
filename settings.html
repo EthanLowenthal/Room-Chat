@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/static/index.css">
+    <meta charset="UTF-8">    <title>Settings</title>
+</head>
+<body>
+<form method="post">
+    <label for="delay">Delay</label>
+    <select name="delay" id="delay">
+        <option value="None"></option>
+        <option value="1 Minute"></option>
+        <option value="5 Minutes"></option>
+        <option value="15 Minutes"></option>
+        <option value="30 Minutes"></option>
+    </select>
+    <label><input type="checkbox" name="max?" value="Max?" onclick="document.querySelector('#maxVal').style.display = 'block'">Maximum Room Occupancy?<br></label>
+    <label><input style="display:none" id="maxVal" value="100" type="text"> Max Students</label>
+    <input type="submit" value="settings">
+</form>
+
+</body>
+</html>

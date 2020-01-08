@@ -16,6 +16,9 @@ class Room(db.Model):
     number = db.Column(db.Integer, nullable=False)
     users = db.relationship('User', backref='room')
     teacher = db.relationship('User', uselist=False)
+    delay = db.Column(db.Integer, nullable=False)
+    maxOcc = db.Column(db.Integer, nullable=False)
+
 
     def __init__(self, number, users=[], teacher=None):
         self.number = number
@@ -118,7 +121,7 @@ def join():
 @app.route('/create', methods=['GET','POST'])
 def create():
     if request.method == 'GET':
-        return render_template('name.html')
+        return render_template('settings.html')
 
     if request.method == 'POST':
         roomno = str(time.time()).replace(".", "")[-6:]
@@ -131,6 +134,8 @@ def create():
         teacher = User(name=request.form['name'], room_id=room.number, is_teacher=True)
         room.users.append(teacher)
         room.teacher = teacher
+        room.delay = request.form['delay']
+        room.maxOcc = request.form['max']
         db.session.add(room)
         db.session.add(teacher)
         db.session.commit()
