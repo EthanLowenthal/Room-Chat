@@ -155,3 +155,14 @@ def new_message(json):
 
 if __name__ == '__main__':
     socketio.run(app)
+class Problem(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String, nullable=False)
+    message = db.Column(db.String, nullable=False)
+    sender = db.relationship('User')
+    solved = db.Column(db.Boolean, nullable=False)
+@socketio.on('submitted')
+def new_problem(json):
+    problem = Problem(title = json["title"], message = json["message"], sender = User.query.filter_by(id = json["id"]).first(), solved = False)
+    db.session.add(problem)
+    db.session.commit()
