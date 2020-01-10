@@ -7,18 +7,20 @@
 </head>
 <body>
 <form method="post">
+    Name: <input type="text" name="name" class="biginput" maxlength="20" size="15"><br>
     <label for="delay">Delay</label>
     <select name="delay" id="delay">
-        <option value="None"></option>
-        <option value="1 Minute"></option>
-        <option value="5 Minutes"></option>
-        <option value="15 Minutes"></option>
-        <option value="30 Minutes"></option>
+        <option value="0">None</option>
+        <option value="60">1 Minute</option>
+        <option value="120">2 Minutes</option>
+        <option value="300">5 Minutes</option>
+        <option value="900">15 Minutes</option>
     </select>
-    <label><input type="checkbox" name="max?" value="Max" onclick="document.querySelector('#maxVal').style.display = 'block'">Maximum Room Occupancy?<br></label>
-    <label><input style="display:none" id="maxVal" value="100" type="text"> Max Students</label>
-    <label><input type="checkbox" name="solved?" value="Show">Show Solved Problems?<br></label>
-    <input type="submit" value="settings">
+    <br>
+    <label><input type="checkbox" name="max?" value="Max" onclick="document.querySelector('#maxVal').style.display = this.checked ? 'block': 'none'">Maximum Room Occupancy?<br></label>
+    <input name="max" style="display:none" id="maxVal" value="100" type="text">
+    <label><input name="solved" type="checkbox" name="solved?">Show Solved Problems Alongside Current Problems?<br></label>
+    <input type="submit" value="Submit Settings">
 </form>
 
 </body>

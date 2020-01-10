@@ -18,6 +18,7 @@ class Room(db.Model):
     teacher = db.relationship('User', uselist=False)
     delay = db.Column(db.Integer, nullable=False)
     maxOcc = db.Column(db.Integer, nullable=False)
+    showSolved = db.Column(db.Boolean, nullable=False)
 
 
     def __init__(self, number, users=[], teacher=None):
@@ -38,7 +39,7 @@ class Room(db.Model):
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     is_teacher = db.Column(db.Boolean, nullable=False)
-    name = db.Column(db.String, nullable=False)
+    name = db.Column(db.String, nullable=True)
     room_id = db.Column(db.Integer, db.ForeignKey('room.number'), nullable=False)
 
     def __init__(self, name, room_id, is_teacher=False):
@@ -72,6 +73,7 @@ def room(roomno):
     return redirect("/")
 
 
+
 @app.route('/delete/<roomno>')
 def delete(roomno):
     user = User.query.filter_by(id=session.get("user")).first()
@@ -91,17 +93,18 @@ def delete(roomno):
 def join():
     if request.method == 'GET':
         return render_template("join.html")
-
     elif request.method == 'POST':
         if request.form.get('code') and not request.form.get('name'):
             try:
                 int(request.form['code'])
             except ValueError:
-                return render_template("join.html", badcode=True)
+                return render_template("join.html", error="Room Not Found")
 
             room = Room.query.filter_by(number=int(request.form['code'])).first()
             if room is None:
-                return render_template("join.html", badcode=True)
+                return render_template("join.html", error="Room Not Found")
+            elif room.maxOcc >= len(room.users):
+                return render_template("join.html", error="Room Full")
             return render_template('name.html', code=request.form['code'])
 
         elif request.form.get('code') and request.form.get('name'):
@@ -117,6 +120,12 @@ def join():
             return redirect(f'/room/{request.form["code"]}')
 
     return render_template("join.html")
+#
+# @app.route('/create', methods=['GET','POST'])
+# def create():
+#     if request.method == "GET":
+#         return render_template('name.html')
+#     elif request.method == 'POST':
 
 @app.route('/create', methods=['GET','POST'])
 def create():
@@ -134,8 +143,9 @@ def create():
         teacher = User(name=request.form['name'], room_id=room.number, is_teacher=True)
         room.users.append(teacher)
         room.teacher = teacher
-        room.delay = request.form['delay']
-        room.maxOcc = request.form['max']
+        room.delay = int(request.form['delay'])
+        room.maxOcc = int(request.form['max'])
+        room.showSolved = True if request.form['solved'] == "on" else False
         db.session.add(room)
         db.session.add(teacher)
         db.session.commit()
@@ -146,7 +156,10 @@ def create():
 
 @socketio.on('leave')
 def leave(json):
-    User.query.filter_by(id=session['user']).delete()
+    user = User.query.filter_by(id=session['user'])
+    room = Room.query.filter_by(number=user.room_id)
+    user.delete()
+
     db.session.commit()
     session['user'] = None
     leave_room(json["room"])

@@ -10,9 +10,7 @@
 <div class="parent">
     <div class="child">
         <form method="post">
-            {% if badcode %}
-            Room code not found!<br>
-            {% endif %}
+             {{ error }}<br>
             Class code: <input type="text" name="code" placeholder="••••••••" class="biginput" maxlength="6" size="8"><input type="submit" value="join">
         </form>
     </div>
