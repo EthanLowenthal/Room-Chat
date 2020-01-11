@@ -1,11 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="/static/index.css">
-    <meta charset="UTF-8">
-    <title>Name</title>
-</head>
+{% include 'head.html' %}
+
+    <title>Join Room</title>
 <body>
 <div class="parent">
     <div class="child">
@@ -15,7 +12,7 @@
 
                 <div class="input-group">
                     <span class="input-group-label">Class code:</span> <input type="text" name="code" placeholder="••••••••" class="text-large input-group-input" maxlength="6" size="8">
-                    <span class="button-large input-group-button" onclick="document.querySelector('#class-code').style.display='none';document.querySelector('#name').style.display='block'">next</span>
+                    <span class="button button-large input-group-button" onclick="document.querySelector('#class-code').style.display='none';document.querySelector('#name').style.display='block'">next</span>
                 </div>
 
                 {% if error|length > 0 %}
@@ -27,7 +24,7 @@
 
                 <div class="input-group">
                     <span class="input-group-label">Name:</span> <input type="text" name="name" class="text-large input-group-input" maxlength="20" size="15">
-                    <span onclick="document.getElementById('form').submit()" class="input-group-button button-large">go</span>
+                    <span onclick="document.getElementById('form').submit()" class="input-group-button button button-large">go</span>
                 </div>
             </div>
         </form>

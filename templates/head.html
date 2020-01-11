@@ -1,0 +1,57 @@
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/static/index.css">
+    <meta charset="UTF-8">
+</head>
+<div id="settings">settings</div>
+
+
+<div id="settings-modal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <div class="input-group" style="margin-top: 11px">
+    <span style="margin: 18px;margin-left:0">Theme</span>
+    <div class="select" style="width: 9em;">
+
+        <select id="theme-select" onchange="switchTheme(this)">
+                <option value="red">red</option>
+                <option value="blue">blue</option>
+                <option value="yellow">yellow</option>
+        </select>
+    </div>
+</div>
+  </div>
+
+</div>
+
+<script type="text/javascript">
+    const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : null;
+    if (currentTheme) {
+        document.documentElement.setAttribute('data-theme', currentTheme);
+        document.getElementById("theme-select").value = currentTheme
+    } else {
+        document.documentElement.setAttribute('data-theme', 'yellow');
+        document.getElementById("theme-select").value = 'yellow';
+    }
+
+    function switchTheme(elem) {
+        document.documentElement.setAttribute('data-theme', elem.value);
+        localStorage.setItem('theme', elem.value);
+    }
+</script>
+<script type="text/javascript">
+    var modal = document.getElementById("settings-modal");
+    var btn = document.getElementById("settings");
+    var span = document.getElementsByClassName("close")[0];
+    btn.onclick = function() {
+      modal.style.display = "block";
+    }
+    span.onclick = function() {
+      modal.style.display = "none";
+    }
+    window.onclick = function(event) {
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    }
+</script>

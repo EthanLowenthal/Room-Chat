@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="/static/index.css">
-    <meta charset="UTF-8">    <title>Settings</title>
-</head>
+{% include 'head.html' %}
+<title>Settings</title>
+
 <body>
-<div style="margin: 50px; margin-top: 100px;">
+<div style="top:0;position: absolute;">
+<div style="margin: 50px">
+
 <span class="back-btn" onclick="window.location.href='/'">< back</span>
 <form id="form" method="post">
 
@@ -48,8 +48,9 @@
     <label>Show Solved Problems Alongside Current Problems</label>
     </div>
     <br>
-    <span onclick="document.getElementById('form').submit()" class="button-large">Create Room</span>
+    <span onclick="document.getElementById('form').submit()" class="button button-large">Create Room</span>
 </form>
 </div>
+    </div>
 </body>
 </html>
