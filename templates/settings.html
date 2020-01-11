@@ -9,7 +9,7 @@
 <div style="margin: 50px; margin-top: 100px;">
 <form id="form" method="post">
     Name: <input type="text" name="name" class="text-large" maxlength="20" size="15"><br>
-        <div class="input-group">
+        <div class="input-group" style="margin-top: 11px">
 
             <span style="margin: 18px;margin-left:0">Delay</span>
     <div class="select">
@@ -28,13 +28,23 @@
     <div>
 
     <div class="input-group">
+        <label class="switch" style="margin-top: 11px;">
         <input type="checkbox" name="has_max" value="Max" style="margin-top: 18px;" onclick="document.querySelector('#maxVal').style.display = this.checked ? 'block': 'none'">
+          <span class="slider round"></span>
+        </label>
+
         <span style="margin: 11px;">Maximum Room Occupancy:</span><input name="max" style="display:none" id="maxVal" value="100" size="4" class="text-medium" type="text">
     </div>
         </div>
     <br>
+    <div class="input-group">
+        <label class="switch" style="margin-right: 11px">
     <input name="solved" type="checkbox" value="off" >
+            <span class="slider round"></span>
+        </label>
+
     <label>Show Solved Problems Alongside Current Problems</label>
+    </div>
     <br>
     <span onclick="document.getElementById('form').submit()" class="button-large">Create Room</span>
 </form>
