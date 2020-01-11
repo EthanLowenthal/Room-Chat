@@ -143,9 +143,11 @@ select::-ms-expand {
   width: 20em;
   height: 3em;
   line-height: 3;
-  background: #2c3e50;
+  background: #95074090;
   overflow: hidden;
   border-radius: .25em;
+        border: 2px solid #950740;
+
 }
 select {
   flex: 1;
@@ -155,21 +157,18 @@ select {
 }
 /* Arrow */
 .select::after {
-  content: '\25BC';
+  content: '';
   position: absolute;
-  top: 0;
-  right: 0;
-  padding: 0 1em;
-  background: #95074090;
+  top: 23px;
+  right: 20px;
   cursor: pointer;
   pointer-events: none;
-  -webkit-transition: .25s all ease;
-  -o-transition: .25s all ease;
-  transition: .25s all ease;
+  border: 0.7em solid;
+    border-color: #d30a5b transparent transparent transparent;
 }
 /* Transition */
-.select:hover::after {
-  color: rgba(221, 10, 95, 0.56);
+.select:hover {
+  background: #950740;
 }
 
 
@@ -217,7 +216,7 @@ select {
   transition: .2s;
 }
 
-.slider:before {
+.slider:after {
   position: absolute;
   content: "";
   height: 13px;
@@ -228,16 +227,19 @@ select {
   -webkit-transition: .2s;
   transition: .2s;
 }
+.slider:hover:after {
+    background-color: #730021;
+}
 
 input:checked + .slider {
-  background-color: #95074090;
+  background-color: #950740;
 }
 
 input:focus + .slider {
-  box-shadow: 0 0 1px #95074090;
+  box-shadow: 0 0 1px #950740;
 }
 
-input:checked + .slider:before {
+input:checked + .slider:after {
   -webkit-transform: translateX(19px);
   -ms-transform: translateX(19px);
   transform: translateX(19px);
@@ -248,7 +250,7 @@ input:checked + .slider:before {
   border-radius: 34px;
 }
 
-.slider.round:before {
+.slider.round:after {
   border-radius: 50%;
 }
 
