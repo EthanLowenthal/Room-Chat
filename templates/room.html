@@ -13,18 +13,18 @@
     <!-- this leaves a blank span if there is no teacjer. this is on purpose becuase this is coded badly pls do no remove-->
     <div class="room-info">Welcome, {{ user['name'] }} {% if not user['is_teacher']%}| Teacher: {{ room['teacher'] }}{% endif %}</div>
     <div>
-        <h1>Chat:</h1>
-
-        <div id="controls">
+    <div id="controls" style="margin-right: 10px;" class="btn-group-large">
             {% if user['is_teacher']%}
-            <a href="/delete/{{ roomno }}">Delete Room</a>
+            <a class="button-large" href="/delete/{{ roomno }}">Delete Room</a>
             {% else %}
-            <a href="/">Leave Room</a>
-            <a href="/">New Problem</a>
+            <a class="button-large" href="/">Leave Room</a>
             {% endif %}
+            <a class="button-large" href="/">New Problem</a>
         </div>
 
-        <div id="chat-wrapper">
+        <h1>Chat:</h1>
+
+        <div id="chat-wrapper" style="border-radius: 10px">
             <div id="chat-box">
             </div>
             <div id="users-list">
@@ -34,10 +34,13 @@
                     {% endfor %} </div>
             </div>
         </div>
-        <form onsubmit="sendMessage();return false">
+        <form id="message-form" onsubmit="sendMessage();return false">
+            <div class="input-group">
+                    <input type="text" name="message" value="" id="message" class="text-large input-group-input" autocomplete="off">
+                    <span onclick="sendMessage()" class="input-group-button button-large">send</span>
+                </div>
+
             <!--<input type="hidden" name="user" value="{{ user['id'] }}">-->
-            <input type="text" name="message" value="" id="message" class="biginput" autocomplete="off">
-            <input onclick="sendMessage();" type="submit" value="Send">
         </form>
     </div>
 </div>

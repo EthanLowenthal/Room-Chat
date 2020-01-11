@@ -55,7 +55,16 @@ class User(db.Model):
             'is_teacher': self.is_teacher,
         }
 
+# class Problem(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     title = db.Column(db.String, nullable=False)
+#     message = db.Column(db.String, nullable=False)
+#     sender = db.relationship('User')
+#     solved = db.Column(db.Boolean, nullable=False)
+
 db.create_all()
+
+
 
 @app.route('/')
 def index():
@@ -93,38 +102,36 @@ def delete(roomno):
 def join():
     if request.method == 'GET':
         return render_template("join.html")
+
     elif request.method == 'POST':
-        if request.form.get('code') and not request.form.get('name'):
-            try:
-                int(request.form['code'])
-            except ValueError:
-                return render_template("join.html", error="Room Not Found")
+        try:
+            int(request.form['code'])
+        except ValueError:
+            return render_template("join.html", error="Invalid room number")
 
-            room = Room.query.filter_by(number=int(request.form['code'])).first()
-            if room is None:
-                return render_template("join.html", error="Room Not Found")
-            elif room.maxOcc >= len(room.users):
-                return render_template("join.html", error="Room Full")
-            return render_template('name.html', code=request.form['code'])
+        room = Room.query.filter_by(number=int(request.form['code'])).first()
+        if room is None:
+            return render_template("join.html", error="Room Not Found")
+        elif room.maxOcc <= len(room.users):
+            return render_template("join.html", error="Room Full")
 
-        elif request.form.get('code') and request.form.get('name'):
-            room = Room.query.filter_by(number=int(request.form['code'])).first()
-            user = User(name=request.form['name'], room_id=room.number, is_teacher=False)
-            room.users.append(user)
-            db.session.add(room)
-            db.session.add(user)
-            db.session.commit()
+        room = Room.query.filter_by(number=int(request.form['code'])).first()
+        user = User(name=request.form['name'], room_id=room.number, is_teacher=False)
+        room.users.append(user)
+        db.session.add(room)
+        db.session.add(user)
+        db.session.commit()
 
-            session['user'] = user.id
+        session['user'] = user.id
 
-            return redirect(f'/room/{request.form["code"]}')
+        return redirect(f'/room/{request.form["code"]}')
 
     return render_template("join.html")
 #
 # @app.route('/create', methods=['GET','POST'])
 # def create():
 #     if request.method == "GET":
-#         return render_template('name.html')
+#         return render_template('join.html')
 #     elif request.method == 'POST':
 
 @app.route('/create', methods=['GET','POST'])
@@ -143,9 +150,9 @@ def create():
         teacher = User(name=request.form['name'], room_id=room.number, is_teacher=True)
         room.users.append(teacher)
         room.teacher = teacher
-        room.delay = int(request.form['delay'])
-        room.maxOcc = int(request.form['max'])
-        room.showSolved = True if request.form['solved'] == "on" else False
+        room.delay = int(request.form.get('delay')) # .get() returns None if the item doesnt exsist, so no error. it was being weid idk why
+        room.maxOcc = int(request.form.get('max'))
+        room.showSolved = True if request.form.get('solved') == "on" else False
         db.session.add(room)
         db.session.add(teacher)
         db.session.commit()
@@ -156,14 +163,20 @@ def create():
 
 @socketio.on('leave')
 def leave(json):
-    user = User.query.filter_by(id=session['user'])
-    room = Room.query.filter_by(number=user.room_id)
-    user.delete()
+    user = User.query.filter_by(id=session['user']).first()
+    if user.is_teacher:
+        Room.query.filter_by(number=user.room_id).delete()
+    else:
+        Room.query.filter_by(number=user.room_id).first().users.remove(user)
+        User.query.filter_by(id=session['user']).delete()
+        emit('disconnection', {"name": json["name"]}, room=json["room"])
 
+    db.session.add(room)
+    db.session.add(user)
     db.session.commit()
     session['user'] = None
     leave_room(json["room"])
-    emit('disconnection', {"name":json["name"]}, room=json["room"])
+
 
 @socketio.on('join')
 def join(json):
@@ -176,14 +189,9 @@ def new_message(json):
 
 if __name__ == '__main__':
     socketio.run(app)
-class Problem(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String, nullable=False)
-    message = db.Column(db.String, nullable=False)
-    sender = db.relationship('User')
-    solved = db.Column(db.Boolean, nullable=False)
-@socketio.on('submitted')
-def new_problem(json):
-    problem = Problem(title = json["title"], message = json["message"], sender = User.query.filter_by(id = json["id"]).first(), solved = False)
-    db.session.add(problem)
-    db.session.commit()
+
+# @socketio.on('submitted')
+# def new_problem(json):
+#     problem = Problem(title = json["title"], message = json["message"], sender = User.query.filter_by(id = json["id"]).first(), solved = False)
+#     db.session.add(problem)
+#     db.session.commit()
