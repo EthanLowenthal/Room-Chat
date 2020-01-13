@@ -51,7 +51,7 @@
     btn.on("click", () => {modal.show()});
     span.on("click", () => {modal.hide()});
     window.onclick = (event) => {
-      if (event.target == modal) {
+      if (event.target == modal[0]) {
         modal.hide();
       }
     }

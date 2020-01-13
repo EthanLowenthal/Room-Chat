@@ -246,12 +246,9 @@ select {
   border: 0.7em solid;
     border-color: var(--primary-color-light) transparent transparent transparent;
 }
-/* Transition */
 .select:hover {
   background: var(--primary-color);
 }
-
-
 
 .button-group>.button:not(:last-child) {
     border-top-right-radius: 0;
@@ -325,7 +322,6 @@ input:checked + .slider:after {
   transform: translateX(19px);
 }
 
-/* Rounded sliders */
 .slider.round {
   border-radius: 34px;
 }
