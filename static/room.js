@@ -1,12 +1,16 @@
 
 newMsg = (msg) => {
-          // Insert text
-    var para = document.createElement("P");                 // Create a <p> element
-    para.innerHTML = msg;
-    chat = document.getElementById("chat-box");
-    chat.appendChild(para);
-    chat.scrollTop = chat.scrollHeight;
-
+    chat = $("#chat-box");
+    chat.append(`<p>${msg}</p>`);
+    chat.scrollTop(chat.prop('scrollHeight'));
+};
+sendMessage = () => {
+    message = $("#message");
+    if (message.val() != "") {
+        console.log(message.val());
+        socket.emit('message', {name: name, room: room, message: message.val()});
+        message.val("");
+    }
 };
 
 var socket = io();
@@ -20,27 +24,23 @@ socket.on('room_deleted', function() {
 
 socket.on('disconnection', function(data) {
     newMsg(`[server]: ${data.name} has left the room`);
-    document.querySelector("#user-count").innerHTML = parseInt(document.querySelector("#user-count").innerHTML) - 1;
-    document.querySelector("#users").innerHTML = document.querySelector("#users").innerHTML.replace(`${data.name}<br>`, "");
+    user_cout = $("#user-count");
+    users = $("#users");
+    user_cout.html(parseInt(user_cout.html()) - 1);
+    users.html(users.html().replace(`${data.name}<br>`, ""));
 });
 
 socket.on('connection', function(data) {
     newMsg(`[server]: ${data.name} has entered the room`);
-    document.querySelector("#user-count").innerHTML = parseInt(document.querySelector("#user-count").innerHTML) + 1;
-    document.querySelector("#users").innerHTML += `${data.name}<br>`
+    user_cout = $("#user-count");
+    users = $("#users");
+    user_cout.html(parseInt(user_cout.html()) + 1);
+    users.append(`${data.name}<br>`);
 });
-
 socket.on('new_message', function(data) {
     newMsg(`${data.name}: ${data.message}`);
 });
 
-sendMessage = () => {
-    if (document.getElementById("message").value != "") {
-        console.log(document.getElementById("message").value);
-        socket.emit('message', {name: name, room: room, message: document.getElementById("message").value});
-        document.getElementById("message").value = "";
-    }
-};
 
 window.addEventListener("beforeunload", function (e) {
   socket.emit('leave', {name: name, room: room});

@@ -169,7 +169,8 @@ def leave(json):
     else:
         Room.query.filter_by(number=user.room_id).first().users.remove(user)
         User.query.filter_by(id=session['user']).delete()
-        emit('disconnection', {"name": json["name"]}, room=json["room"])
+
+    emit('disconnection', {"name": json["name"]}, room=json["room"])
 
     db.session.add(room)
     db.session.add(user)
