@@ -16,7 +16,8 @@
             {% else %}
                 <a class="button button-medium" href="/">Leave Room</a>
             {% endif %}
-            <a class="button button-medium" href="/">New Problem</a>
+            <a class="button button-medium" id="view-problem">View Problems</a>
+            <a class="button button-medium" id="new-problem">New Problem</a>
         </div>
 
         <h1>Chat:</h1>
@@ -42,10 +43,51 @@
     </div>
 </div>
 </body>
+<div id="new-problem-modal" class="modal">
+  <div class="modal-content">
+    <span class="close" id="close-new-problem">&times;</span>
+      <input id="problem-title" class="invisible-input" type="text" placeholder="Title">
+
+      <textarea id="problem-message" class="invisible-input" rows="4" cols="50" placeholder="Message ..."></textarea>
+
+      <button id="problem-submit" class="button button-medium">Submit</button>
+</div>
+  </div>
+
+<div id="view-problem-modal" class="modal">
+  <div class="modal-content">
+    <span class="close" id="close-veiw-problem">&times;</span>
+    <h3>Problems</h3>
+      <ul id="problem-list"></ul> {#  no whitespace for :empty message to work  #}
+
+</div>
+  </div>
+
+
 <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
 <script type="text/javascript" charset="utf-8">
     var name = "{{ user['name'] }}";
     var room = "{{ roomno }}";
 </script>
 <script src="/static/room.js"></script>
+<script type="text/javascript">
+    var new_problem_modal = $("#new-problem-modal");
+    $("#new-problem").on("click", () => {new_problem_modal.show()});
+    $("#close-new-problem").on("click", () => {new_problem_modal.hide()});
+    window.addEventListener('click', function(event) {
+        if (event.target == new_problem_modal[0]) {
+            new_problem_modal.hide();
+        }
+    });
+
+    var view_problem_modal = $("#view-problem-modal");
+
+    $("#view-problem").on("click", () => {view_problem_modal.show()});
+    $("#close-veiw-problem").on("click", () => {view_problem_modal.hide()});
+    window.addEventListener('click', function(event) {
+        if (event.target == view_problem_modal[0]) {
+            view_problem_modal.hide();
+        }
+    });
+</script>
 </html>

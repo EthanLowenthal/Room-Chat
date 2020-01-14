@@ -184,8 +184,13 @@ def join(json):
     join_room(json["room"])
     emit('connection', {"name":json["name"]}, room=json["room"])
 
+@socketio.on('problem')
+def new_problem(json):
+    emit('new_problem', {"name":json["name"], "title":json["title"] ,"message":json["message"]}, room=json["room"])
+
 @socketio.on('message')
 def new_message(json):
+    print(json)
     emit('new_message', {"name":json["name"], "message":json["message"]}, room=json["room"])
 
 if __name__ == '__main__':

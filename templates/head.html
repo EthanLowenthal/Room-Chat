@@ -13,7 +13,7 @@
 
 <div id="settings-modal" class="modal">
   <div class="modal-content">
-    <span class="close">&times;</span>
+    <span class="close" id="close-settings">&times;</span>
     <div class="input-group" style="margin-top: 11px">
     <span style="margin: 18px;margin-left:0">Theme</span>
     <div class="select" style="width: 9em;">
@@ -45,14 +45,12 @@
     }
 </script>
 <script type="text/javascript">
-    var modal = $("#settings-modal");
-    var btn = $("#settings");
-    var span = $(".close");
-    btn.on("click", () => {modal.show()});
-    span.on("click", () => {modal.hide()});
-    window.onclick = (event) => {
-      if (event.target == modal[0]) {
-        modal.hide();
-      }
-    }
+    var settings_modal = $("#settings-modal");
+    $("#settings").on("click", () => {settings_modal.show()});
+    $("#close-settings").on("click", () => {settings_modal.hide()});
+    window.addEventListener('click', function(event) {
+        if (event.target == settings_modal[0]) {
+            settings_modal.hide();
+        }
+    });
 </script>

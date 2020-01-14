@@ -12,6 +12,57 @@ body {
     background: aliceblue;
     color: black;
 }
+#problem-message {
+    resize: none;font-size: 20px;
+}
+#problem-submit {
+    height: 50px;
+}
+.problem-created-by {
+    overflow: scroll;
+    width: 15%;
+    transform: translate(0, -20px);
+    color: #4c4c55;
+    font-size: 15px;
+    position: absolute;
+    white-space: nowrap;
+    right: 10%;
+}
+.problem-created-by:before {
+    content: "Created by: ";
+}
+.problem-created-by:hover {
+    color: white;
+}
+.problem-list-problem {
+    list-style: none;
+    font-size: 25px;
+    padding: 2px 0px;
+    border-bottom: 1px solid #4c4c55;
+    border-radius: 2px;
+    height: 35px;
+}
+.problem-list-problem>div {
+    white-space: nowrap;
+    width: 80%;
+    overflow: scroll;
+}
+.problem-created-by::-webkit-scrollbar {
+  display: none;
+}
+.problem-list-problem>div::-webkit-scrollbar {
+  display: none;
+}
+.problem-list-problem:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+#problem-list {
+    padding: 0;
+}
+#problem-list:empty::after {
+    content: "No Problems";
+    text-align: center;
+}
 #chat-box {
     padding: 5px 15px;
     height: 4in;

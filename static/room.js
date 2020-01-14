@@ -1,4 +1,6 @@
 
+var problems;
+
 newMsg = (msg) => {
     chat = $("#chat-box");
     chat.append(`<p>${msg}</p>`);
@@ -40,7 +42,17 @@ socket.on('connection', function(data) {
 socket.on('new_message', function(data) {
     newMsg(`${data.name}: ${data.message}`);
 });
-
+socket.on('new_problem', function(data) {
+    newMsg(`${data.name} created new problem: <a class="button button-medium">${data.title}</a>`);
+});
+$("#problem-submit").on("click", () => {
+    var message = $("#problem-message");
+    var title = $("#problem-title");
+    socket.emit('problem', {name: name, room: room, title:title.val(), message:message.val()});
+    title.val("");
+    message.val("");
+    $("#new-problem-modal").hide();
+});
 
 window.addEventListener("beforeunload", function (e) {
   socket.emit('leave', {name: name, room: room});
