@@ -1,6 +1,4 @@
 
-var problems;
-
 newMsg = (msg) => {
     chat = $("#chat-box");
     chat.append(`<p>${msg}</p>`);
@@ -43,8 +41,18 @@ socket.on('new_message', function(data) {
     newMsg(`${data.name}: ${data.message}`);
 });
 socket.on('new_problem', function(data) {
-    newMsg(`${data.name} created new problem: <a class="button button-medium">${data.title}</a>`);
+    newMsg(`${data.name} created new problem: <a onclick="veiwProblem(${data.id})" class="button button-medium">${data.title}</a>`);
+    $("#problem-list").append(`<li class="problem-list-problem"><div onclick="veiwProblem(${data.id})">${data.title}</div> <span class="problem-created-by">${data.name}</span></li>`)
+    problems[data.id] = data
 });
+veiwProblem = (id) => {
+    var problem = problems[id];
+    $('#veiw-problem-title').html(problem.title);
+    $('#veiw-problem-message').html(problem.message);
+    $('#problem-list-content').hide();
+    $('#veiw-problem-content').show();
+    $("#view-problem-modal").show();
+}
 $("#problem-submit").on("click", () => {
     var message = $("#problem-message");
     var title = $("#problem-title");

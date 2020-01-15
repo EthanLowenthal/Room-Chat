@@ -19,6 +19,7 @@ body {
     height: 50px;
 }
 .problem-created-by {
+    cursor: pointer;
     overflow: scroll;
     width: 15%;
     transform: translate(0, -20px);
@@ -56,12 +57,30 @@ body {
 .problem-list-problem:hover {
     background: rgba(255, 255, 255, 0.1);
 }
+.problem-list-problem.solved>div {
+    width: calc(80% - 83px);
+    margin-left: 83px;
+}
+.problem-list-problem.solved>div::before {
+    font-size: 19px;
+    padding: 3px 10px;
+    content: "Solved";
+    position: absolute;
+    background: #129612;
+    border-radius: 7px;
+    transform: translate(-83px, 0px);
+}
+.problem-list-problem>div {
+    cursor: pointer;
+}
 #problem-list {
     padding: 0;
 }
+#problem-list:empty{
+    text-align: center;
+}
 #problem-list:empty::after {
     content: "No Problems";
-    text-align: center;
 }
 #chat-box {
     padding: 5px 15px;
@@ -75,6 +94,9 @@ body {
     border-top-width: 0px;
     border-bottom-width: 0px;
     border-style: solid;
+}
+#veiw-problem-content {
+    display: none;
 }
 #users-list {
     padding-top: 5px;
