@@ -155,6 +155,9 @@ input[type="submit"] {
     text-decoration: none;
     border: 2px solid var(--primary-color);
 }
+.button::-webkit-scrollbar {
+  display: none;
+}
 .button:hover{
     background: var(--primary-color);
 }

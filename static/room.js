@@ -42,7 +42,7 @@ socket.on('new_message', function(data) {
     newMsg(`${data.name}: ${data.message}`);
 });
 socket.on('new_problem', function(data) {
-    newMsg(`${data.name} created new problem: <a onclick="viewProblem(${data.id})" class="button button-medium">${data.title}</a>`);
+    newMsg(`${data.name} created new problem: <a style="overflow: scroll;"  onclick="viewProblem(${data.id})" class="button button-medium">${data.title}</a>`);
     $("#problem-list").append(`<li data-id="${data.id}" class="problem-list-problem"><div onclick="viewProblem(${data.id})">${data.title}</div> <span class="problem-created-by">${data.name}</span></li>`)
     problems[data.id] = data
 });
@@ -54,7 +54,7 @@ problemSolved = (problem_id) => {
 socket.on('new_problem_solved', function(data) {
       $(`[data-id='${data.id}']`).addClass('solved');
     problems[data.id]["solved"] = true;
-    newMsg(`Problem was marked as solved: <a onclick="viewProblem(${data.id})" class="button button-medium">${problems[data.id]['title']}</a>`);
+    newMsg(`Problem was marked as solved: <a style="overflow: scroll;" onclick="viewProblem(${data.id})" class="button button-medium">${problems[data.id]['title']}</a>`);
 });
 problemDeleted = (problem_id) => {
     socket.emit('problem_deleted', {id: problem_id, room:room});
