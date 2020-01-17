@@ -73,13 +73,13 @@ body {
 .problem-list-problem>div {
     cursor: pointer;
 }
-#problem-list {
+.problem-list {
     padding: 0;
 }
-#problem-list:empty{
+.problem-list:empty{
     text-align: center;
 }
-#problem-list:empty::after {
+.problem-list:empty::after {
     content: "No Problems";
 }
 #chat-box {
@@ -95,7 +95,7 @@ body {
     border-bottom-width: 0px;
     border-style: solid;
 }
-#veiw-problem-content {
+#view-problem-content {
     display: none;
 }
 #users-list {

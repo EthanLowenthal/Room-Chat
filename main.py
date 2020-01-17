@@ -13,9 +13,9 @@ db = SQLAlchemy(app)
 
 class User(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
-	is_teacher = db.Column(db.Boolean, nullable=False)
+	is_teacher = db.Column(db.Boolean)
 	name = db.Column(db.String, nullable=True)
-	room_id = db.Column(db.Integer, db.ForeignKey('room.number'), nullable=False)
+	room_id = db.Column(db.Integer, db.ForeignKey('room.number'))
 
 	def __init__(self, name, room_id, is_teacher=False):
 		self.name = name
@@ -32,11 +32,11 @@ class User(db.Model):
 
 class Problem(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
-	title = db.Column(db.String, nullable=False)
-	message = db.Column(db.String, nullable=False)
+	title = db.Column(db.String)
+	message = db.Column(db.String)
 	sender = db.relationship(User)
 	sender_id = db.Column(db.ForeignKey(User.id))
-	solved = db.Column(db.Boolean, nullable=False)
+	solved = db.Column(db.Boolean)
 	room_id = db.Column(db.ForeignKey('room.number'))
 
 	@property
@@ -44,6 +44,7 @@ class Problem(db.Model):
 	   return {
 		   'id': self.id,
 		   'sender': self.sender,
+		   'sender_id': self.sender.id,
 		   'solved': self.solved,
 		   'message': self.message,
 		   'title': self.title
@@ -52,13 +53,13 @@ class Problem(db.Model):
 
 class Room(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
-	number = db.Column(db.Integer, nullable=False)
+	number = db.Column(db.Integer)
 	users = db.relationship(User, backref='room')
 	problems = db.relationship(Problem, backref='room')
 	teacher = db.relationship(User, uselist=False)
-	delay = db.Column(db.Integer, nullable=False)
-	maxOcc = db.Column(db.Integer, nullable=False)
-	showSolved = db.Column(db.Boolean, nullable=False)
+	delay = db.Column(db.Integer)
+	maxOcc = db.Column(db.Integer)
+	showSolved = db.Column(db.Boolean)
 
 	def __init__(self, number, users=[], teacher=None):
 		self.number = number
@@ -72,7 +73,8 @@ class Room(db.Model):
 		   'number': self.number,
 		   'teacher': self.teacher.name,
 		   'users': [ user.name for user in self.users],
-		   'problems': [problem for problem in self.problems]
+		   'problems': [problem for problem in self.problems],
+		   'showSolved': self.showSolved,
 	   }
 
 db.create_all()
@@ -165,7 +167,7 @@ def create():
 		room.teacher = teacher
 		room.delay = int(request.form.get('delay')) # .get() returns None if the item doesnt exsist, so no error. it was being weid idk why
 		room.maxOcc = int(request.form.get('max'))
-		room.showSolved = True if request.form.get('solved') == "on" else False
+		room.showSolved = True if request.form.get('solved') == "off" else False # don't ask me why its off and not on, I don't know why
 		db.session.add(room)
 		db.session.add(teacher)
 		db.session.commit()
@@ -176,17 +178,20 @@ def create():
 
 @socketio.on('leave')
 def leave(json):
-	user = User.query.filter_by(id=session['user']).first()
+	user = User.query.filter_by(id=int(session['user'])).first()
+	# room = 	Room.query.filter_by(number=user.room_id).first()
 	if user.is_teacher:
 		Room.query.filter_by(number=user.room_id).delete()
+		# db.session.delete(room)
 	else:
-		Room.query.filter_by(number=user.room_id).first().users.remove(user)
-		User.query.filter_by(id=session['user']).delete()
+		room = Room.query.filter_by(number=user.room_id).first()
+		room.users.remove(user)
+		db.session.add(room)
+
+	User.query.filter_by(id=session['user']).delete()
 
 	emit('disconnection', {"name": json["name"]}, room=json["room"])
 
-	db.session.add(room)
-	db.session.add(user)
 	db.session.commit()
 	session['user'] = None
 	leave_room(json["room"])
@@ -196,6 +201,21 @@ def leave(json):
 def join(json):
 	join_room(json["room"])
 	emit('connection', {"name":json["name"]}, room=json["room"])
+
+@socketio.on('problem_solved')
+def problem_solved(json):
+	problem = Problem.query.filter_by(id=json["id"]).first()
+	problem.solved = True
+	db.session.add(problem)
+	db.session.commit()
+	emit('new_problem_solved', {"id":json["id"]}, room=json["room"])
+
+@socketio.on('problem_deleted')
+def problem_solved(json):
+	problem = Problem.query.filter_by(id=json["id"]).first()
+	db.session.delete(problem)
+	db.session.commit()
+	emit('new_problem_deleted', {"id":json["id"]}, room=json["room"])
 
 @socketio.on('problem')
 def new_problem(json):
@@ -208,7 +228,7 @@ def new_problem(json):
 	db.session.add(room)
 	db.session.commit()
 
-	emit('new_problem', {"id":problem.id, "name":json["name"], "title":json["title"] ,"message":json["message"]}, room=json["room"])
+	emit('new_problem', {"id":problem.id, "sender_id": user.id,"name":json["name"], "title":json["title"] ,"message":json["message"]}, room=json["room"])
 
 @socketio.on('message')
 def new_message(json):
