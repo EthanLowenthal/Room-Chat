@@ -30,7 +30,6 @@ socket.on('disconnection', function(data) {
     user_cout.html(parseInt(user_cout.html()) - 1);
     users.html(users.html().replace(`${data.name}<br>`, ""));
 });
-
 socket.on('connection', function(data) {
     newMsg(`[server]: ${data.name} has entered the room`);
     user_cout = $("#user-count");
@@ -42,9 +41,9 @@ socket.on('new_message', function(data) {
     newMsg(`${data.name}: ${data.message}`);
 });
 socket.on('new_problem', function(data) {
-    newMsg(`${data.name} created new problem: <a style="overflow: scroll;"  onclick="viewProblem(${data.id})" class="button button-medium">${data.title}</a>`);
-    $("#problem-list").append(`<li data-id="${data.id}" class="problem-list-problem"><div onclick="viewProblem(${data.id})">${data.title}</div> <span class="problem-created-by">${data.name}</span></li>`)
-    problems[data.id] = data
+    newMsg(`${data.problem.sender.name} created new problem: <a onclick="viewProblem(${data.id})" class="button button-medium">${data.problem.title}</a>`);
+    $("#problem-list").append(`<li data-id="${data.id}" class="problem-list-problem"><div onclick="viewProblem(${data.id})">${data.problem.title}</div> <span class="problem-created-by">${data.problem.sender.name}</span></li>`)
+    problems[data.id] = data.problem;
 });
 problemSolved = (problem_id) => {
     socket.emit('problem_solved', {id: problem_id, room:room});
@@ -54,7 +53,7 @@ problemSolved = (problem_id) => {
 socket.on('new_problem_solved', function(data) {
       $(`[data-id='${data.id}']`).addClass('solved');
     problems[data.id]["solved"] = true;
-    newMsg(`Problem was marked as solved: <a style="overflow: scroll;" onclick="viewProblem(${data.id})" class="button button-medium">${problems[data.id]['title']}</a>`);
+    newMsg(`Problem was marked as solved: <a onclick="viewProblem(${data.id})" class="button button-medium">${problems[data.id]['title']}</a>`);
 });
 problemDeleted = (problem_id) => {
     socket.emit('problem_deleted', {id: problem_id, room:room});
@@ -66,6 +65,13 @@ socket.on('new_problem_deleted', function(data) {
     delete problems[data.id];
     newMsg(`Problem was deleted: <a class="button button-medium button-disabled">${problems[data.id]['title']}</a>`);
 });
+socket.on('new_comment', function(data) {
+    problems[data.problem].comments.push(data.comment);
+    if ($('#problem-controls').attr('data-id') == data.problem) {
+        $('#comments').append(`<div class="comment" onclick="hideComment(this);"><span>${data.comment.message}</span></div>`)
+    }
+    // newMsg(`Comment was added: <a class="button button-medium">${problems[data.id]['title']}</a>`);
+});
 viewProblem = (id) => {
     var problem = problems[id];
     if (problem == null) {
@@ -75,6 +81,10 @@ viewProblem = (id) => {
     } else {
         $('#view-problem-title').html(problem.title);
         $('#view-problem-message').html(problem.message);
+        $('#comments').html("");
+        problem.comments.forEach(comment => {
+            $('#comments').append(`<div class="comment" onclick="hideComment(this);"><span>${comment.message}</span></div>`)
+        });
         $('#problem-controls').attr('data-id', id);
         if (problem.sender_id == user_id) {
             $('#problem-controls').show();
@@ -95,6 +105,18 @@ $("#problem-submit").on("click", () => {
     message.val("");
     $("#new-problem-modal").hide();
 });
+
+$("#comment-submit").on("click", () => {
+    var message = $("#add-comment-message");
+    socket.emit('comment', {room: room, message:message.val(), problem:$('#problem-controls').attr('data-id')});
+    message.val("");
+    $("#add-comment").hide();
+});
+
+hideComment = (c) => {
+    $(c).toggleClass('comment-hidden');
+    $(c).find('.comment').toggleClass('comment-hidden');
+}
 
 beforeunload = (e) => {
   socket.emit('leave', {name: name, room: room});

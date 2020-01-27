@@ -30,12 +30,25 @@ class User(db.Model):
 			'is_teacher': self.is_teacher,
 		}
 
+class Comment(db.Model):
+	id = db.Column(db.Integer, primary_key=True)
+	message = db.Column(db.String)
+	problem_id = db.Column(db.Integer, db.ForeignKey('problem.id'))
+	@property
+	def serialize(self):
+	   return {
+		   'id': self.id,
+		   'message': self.message
+	   }
+
+
 class Problem(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	title = db.Column(db.String)
 	message = db.Column(db.String)
 	sender = db.relationship(User)
 	sender_id = db.Column(db.ForeignKey(User.id))
+	comments = db.relationship(Comment, backref='problem')
 	solved = db.Column(db.Boolean)
 	room_id = db.Column(db.ForeignKey('room.number'))
 
@@ -43,11 +56,12 @@ class Problem(db.Model):
 	def serialize(self):
 	   return {
 		   'id': self.id,
-		   'sender': self.sender,
+		   'sender': self.sender.serialize,
 		   'sender_id': self.sender.id,
 		   'solved': self.solved,
 		   'message': self.message,
-		   'title': self.title
+		   'title': self.title,
+		   'comments': [comment.serialize for comment in self.comments]
 	   }
 
 
@@ -73,7 +87,7 @@ class Room(db.Model):
 		   'number': self.number,
 		   'teacher': self.teacher.name,
 		   'users': [ user.name for user in self.users],
-		   'problems': [problem for problem in self.problems],
+		   'problems': [problem.serialize for problem in self.problems],
 		   'showSolved': self.showSolved,
 	   }
 
@@ -92,6 +106,7 @@ def room(roomno):
 		return redirect("/")
 	elif str(user.room_id) == str(roomno):
 		room = user.room.serialize
+		print(room)
 		room['users'].pop(-1)
 		return render_template("room.html", roomno=roomno, user=user.serialize, room=room)
 	return redirect("/")
@@ -228,12 +243,23 @@ def new_problem(json):
 	db.session.add(room)
 	db.session.commit()
 
-	emit('new_problem', {"id":problem.id, "sender_id": user.id,"name":json["name"], "title":json["title"] ,"message":json["message"]}, room=json["room"])
+	emit('new_problem', {"id":problem.id, "problem":problem.serialize}, room=json["room"])
 
 @socketio.on('message')
 def new_message(json):
-	print(json)
 	emit('new_message', {"name":json["name"], "message":json["message"]}, room=json["room"])
+
+@socketio.on('comment')
+def new_comment(json):
+	print(json)
+	problem = Problem.query.filter_by(id=json["problem"]).first()
+	comment = Comment(message=json["message"])
+	problem.comments.append(comment)
+	db.session.add(comment)
+	db.session.add(problem)
+	db.session.commit()
+
+	emit('new_comment', {"comment":comment.serialize, "problem":json["problem"]}, room=json["room"])
 
 if __name__ == '__main__':
 	socketio.run(app)

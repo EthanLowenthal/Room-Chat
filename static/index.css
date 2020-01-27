@@ -143,7 +143,14 @@ input[type="submit"] {
     cursor: pointer;
     border-radius: 10px;
 }
-
+.link-hidden {
+    color: #4c4c55;
+    cursor: pointer;
+    font-size: 18px;
+}
+.link-hidden:hover {
+    color: #9c9caf;
+}
 .button {
     display: inline-block;
     background: var(--primary-color-transparent);
@@ -285,7 +292,9 @@ select {
 .select:hover {
   background: var(--primary-color);
 }
-
+.button-group>div {
+    display: inline-block;
+}
 .button-group>.button:not(:last-child) {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
