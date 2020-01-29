@@ -2,12 +2,14 @@ from flask import Flask, render_template, request, redirect, session
 import time
 from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO, emit, join_room, leave_room, send, close_room
+from uuid import uuid4
+import gevent
 
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///db.sqlite"
 app.config["SECRET_KEY"] = "yeet"
-socketio = SocketIO(app)
+socketio = SocketIO(app, async_mode=True)
 db = SQLAlchemy(app)
 
 
@@ -98,6 +100,28 @@ db.create_all()
 @app.route('/')
 def index():
 	return render_template("index.html")
+	# room = Room.query.filter_by(number=1).first()
+	# if room is None:
+	# 	room = Room(number=1, users=[])
+	# 	user = User(name='teach', room_id=room.number, is_teacher=True)
+	# 	room.users.append(user)
+	# 	room.teacher = user
+	# 	room.delay = 0 # .get() returns None if the item doesnt exsist, so no error. it was being weid idk why
+	# 	room.maxOcc = 9999
+	# 	room.showSolved = True # don't ask me why its off and not on, I don't know why
+	# 	db.session.add(room)
+	#
+	# else:
+	# 	user = User(name=str(uuid4()), room_id=room.number, is_teacher=False)
+	# 	room.users.append(user)
+	# 	db.session.add(room)
+	# 	db.session.add(user)
+	#
+	# db.session.commit()
+	#
+	# session['user'] = user.id
+	#
+	# return redirect('/room/1')
 
 @app.route('/room/<roomno>')
 def room(roomno):
@@ -106,7 +130,6 @@ def room(roomno):
 		return redirect("/")
 	elif str(user.room_id) == str(roomno):
 		room = user.room.serialize
-		print(room)
 		room['users'].pop(-1)
 		return render_template("room.html", roomno=roomno, user=user.serialize, room=room)
 	return redirect("/")
@@ -122,7 +145,7 @@ def delete(roomno):
 		Room.query.filter_by(number=int(roomno)).delete()
 		User.query.filter_by(room_id=int(roomno)).delete()
 		db.session.commit()
-		socketio.emit('room_deleted', None, room=str(roomno))
+		socketio.emit('update', {'type':'room_deleted'}, room=str(roomno))
 		session['user'] = None
 		socketio.close_room(str(roomno))
 
@@ -154,15 +177,10 @@ def join():
 
 		session['user'] = user.id
 
-		return redirect(f'/room/{request.form["code"]}')
+		return redirect('/room/%s' % request.form["code"])
 
 	return render_template("join.html")
-#
-# @app.route('/create', methods=['GET','POST'])
-# def create():
-#     if request.method == "GET":
-#         return render_template('join.html')
-#     elif request.method == 'POST':
+
 
 @app.route('/create', methods=['GET','POST'])
 def create():
@@ -189,7 +207,7 @@ def create():
 
 		session["user"] = teacher.id
 
-		return redirect(f'/room/{roomno}')
+		return redirect('/room/%s' %roomno)
 
 @socketio.on('leave')
 def leave(json):
@@ -205,7 +223,7 @@ def leave(json):
 
 	User.query.filter_by(id=session['user']).delete()
 
-	emit('disconnection', {"name": json["name"]}, room=json["room"])
+	emit('update', {'type':'disconnection', "name": json["name"]}, room=json["room"])
 
 	db.session.commit()
 	session['user'] = None
@@ -215,7 +233,7 @@ def leave(json):
 @socketio.on('join')
 def join(json):
 	join_room(json["room"])
-	emit('connection', {"name":json["name"]}, room=json["room"])
+	emit('update', {'type':'connection', "name":json["name"]}, room=json["room"])
 
 @socketio.on('problem_solved')
 def problem_solved(json):
@@ -223,14 +241,14 @@ def problem_solved(json):
 	problem.solved = True
 	db.session.add(problem)
 	db.session.commit()
-	emit('new_problem_solved', {"id":json["id"]}, room=json["room"])
+	emit('update', {'type':'new_problem_solved', "id":json["id"]}, room=json["room"])
 
 @socketio.on('problem_deleted')
 def problem_solved(json):
 	problem = Problem.query.filter_by(id=json["id"]).first()
 	db.session.delete(problem)
 	db.session.commit()
-	emit('new_problem_deleted', {"id":json["id"]}, room=json["room"])
+	emit('update', {'type':'new_problem_deleted', "id":json["id"]}, room=json["room"])
 
 @socketio.on('problem')
 def new_problem(json):
@@ -243,15 +261,14 @@ def new_problem(json):
 	db.session.add(room)
 	db.session.commit()
 
-	emit('new_problem', {"id":problem.id, "problem":problem.serialize}, room=json["room"])
+	emit('update', {'type':'new_problem', "id":problem.id, "problem":problem.serialize}, room=json["room"])
 
 @socketio.on('message')
 def new_message(json):
-	emit('new_message', {"name":json["name"], "message":json["message"]}, room=json["room"])
+	emit('update', {'type':'new_message', "name":json["name"], "message":json["message"]}, room=json["room"])
 
 @socketio.on('comment')
 def new_comment(json):
-	print(json)
 	problem = Problem.query.filter_by(id=json["problem"]).first()
 	comment = Comment(message=json["message"])
 	problem.comments.append(comment)
@@ -259,10 +276,10 @@ def new_comment(json):
 	db.session.add(problem)
 	db.session.commit()
 
-	emit('new_comment', {"comment":comment.serialize, "problem":json["problem"]}, room=json["room"])
+	emit('update', {'type':'new_comment', "comment":comment.serialize, "problem":json["problem"]}, room=json["room"])
 
 if __name__ == '__main__':
-	socketio.run(app)
+	socketio.run(app, threa)
 
 # @socketio.on('submitted')
 # def new_problem(json):
