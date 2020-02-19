@@ -2,14 +2,14 @@ from flask import Flask, render_template, request, redirect, session
 import time
 from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO, emit, join_room, leave_room, send, close_room
-from uuid import uuid4
-import gevent
+# from uuid import uuid4
+# import gevent
 
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///db.sqlite"
 app.config["SECRET_KEY"] = "yeet"
-socketio = SocketIO(app, async_mode=True)
+socketio = SocketIO(app)
 db = SQLAlchemy(app)
 
 
@@ -279,7 +279,7 @@ def new_comment(json):
 	emit('update', {'type':'new_comment', "comment":comment.serialize, "problem":json["problem"]}, room=json["room"])
 
 if __name__ == '__main__':
-	socketio.run(app, threa)
+	socketio.run(app)
 
 # @socketio.on('submitted')
 # def new_problem(json):
