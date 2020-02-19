@@ -1,7 +1,3 @@
-* {
-    --background-color: #1a1a1d;
-
-}
 body {
     background: var(--background-color);
     color: white;
@@ -12,6 +8,18 @@ html, body {
     margin: 0;
     height: 100%;
 
+}
+[data-bg="dark"] {
+    --background-color: #1a1a1d;
+    --font-color: white;
+
+}
+[data-bg="light"] input[type="text"], [data-bg="light"] textarea {
+    border: 1px solid black;
+}
+[data-bg="light"] {
+    --background-color: #ffffff;
+    --font-color: black;
 }
 [data-theme="yellow"] {
     --primary-color: #a78f40;
@@ -30,6 +38,12 @@ html, body {
     --primary-color-transparent: #95074090;
     --primary-color-light: #d30a5b;
     --primary-color-dark: #730021;
+}
+span, label, h1, h2, h3, h4, h5, h6, div {
+    color: var(--font-color);
+}
+#chat-wrapper *, input[type="text"], textarea {
+    color: black !important;
 }
 
 *::selection {
