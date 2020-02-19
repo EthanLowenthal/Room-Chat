@@ -209,6 +209,33 @@ def create():
 
 		return redirect('/room/%s' %roomno)
 
+@app.route('/suggest', methods=['GET','POST'])
+def create():
+	if request.method == 'GET':
+		return render_template('settings.html')
+
+	if request.method == 'POST':
+		roomno = "000001"
+		room = Room.query.filter_by(number=roomno).first()
+		while room is not None:
+			roomno = "000001"
+			room = Room.query.filter_by(number=roomno).first()
+
+		room = Room(number=roomno, users=[])
+		teacher = "GRT"
+		room.users.append(teacher)
+		room.teacher = teacher
+		room.delay = 0
+		room.maxOcc = 100
+		room.showSolved = True
+		db.session.add(room)
+		db.session.add(teacher)
+		db.session.commit()
+
+		session["user"] = teacher.id
+
+		return redirect('/room/%s' %roomno)
+
 @socketio.on('leave')
 def leave(json):
 	user = User.query.filter_by(id=int(session['user'])).first()
@@ -227,6 +254,7 @@ def leave(json):
 
 	db.session.commit()
 	session['user'] = None
+	
 	leave_room(json["room"])
 
 
