@@ -1,7 +1,7 @@
 from flask_socketio import SocketIO, emit, join_room, leave_room, send, close_room
 from flask import session
 
-from models import db, User, Room, Comment, Problem
+from python.models import db, User, Room, Comment, Problem
 
 socketio = SocketIO()
 

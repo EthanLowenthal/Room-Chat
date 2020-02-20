@@ -1,14 +1,14 @@
 from flask import Flask, render_template, request, redirect, session
 import time
 
-from models import db, User, Room, Comment, Problem
-from sockets import socketio
+from python.models import db, User, Room, Comment, Problem
+from python.sockets import socketio
 from uuid import uuid4
 # import gevent
 
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///db.sqlite"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///db/db.sqlite"
 app.config["SECRET_KEY"] = "yeet"
 socketio.init_app(app)
 
