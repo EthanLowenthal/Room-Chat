@@ -7,3 +7,9 @@ a tool for making student/teacher chat rooms
 `flask`
 `flask-sqlalchemy`
 `flask-socketio`
+`gunicorn`
+`gevent`
+
+### To Run:
+Deploy: `gunicorn -k gevent -w 1 main:app`
+Develop: `python main.py`
