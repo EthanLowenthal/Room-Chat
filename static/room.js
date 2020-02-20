@@ -49,6 +49,9 @@ socket.on('update', function(data) {
         case 'new_problem':
              newMsg(`${data.problem.sender.name} created new problem: <a onclick="viewProblem(${data.id})" class="button button-medium">${data.problem.title}</a>`);
             $("#problem-list").append(`<li data-id="${data.id}" class="problem-list-problem"><div onclick="viewProblem(${data.id})">${data.problem.title}</div> <span class="problem-created-by">${data.problem.sender.name}</span></li>`)
+            if (data.problem.sender.id.toString() == user_id) {
+                $("#my-problem-list").append(`<li data-id="${data.id}" class="problem-list-problem"><div onclick="viewProblem(${data.id})">${data.problem.title}</div> <span class="problem-created-by">${data.problem.sender.name}</span></li>`)
+            }
             problems[data.id] = data.problem;
             break;
 

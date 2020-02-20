@@ -12,10 +12,21 @@ html, body {
 [data-bg="dark"] {
     --background-color: #1a1a1d;
     --font-color: white;
-
+}
+[data-bg="dark"] #chat-wrapper {
+    background: aliceblue;
+}
+[data-bg="light"] #chat-wrapper {
+    background: #e2e2e2;
+    box-shadow: inset 0px 0px 32px -17px rgba(0,0,0,0.75);
+}
+[data-bg="dark"] input[type="text"], [data-bg="dark"] textarea {
+    color: var(--font-color);
 }
 [data-bg="light"] input[type="text"], [data-bg="light"] textarea {
-    border: 1px solid black;
+    color: var(--font-color);
+    background: #e2e2e2;
+    box-shadow: inset 0px 0px 32px -17px rgba(0,0,0,0.75);
 }
 [data-bg="light"] {
     --background-color: #ffffff;
@@ -42,7 +53,7 @@ html, body {
 span, label, h1, h2, h3, h4, h5, h6, div {
     color: var(--font-color);
 }
-#chat-wrapper *, input[type="text"], textarea {
+#chat-wrapper *, #message {
     color: black !important;
 }
 

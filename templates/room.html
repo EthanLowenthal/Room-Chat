@@ -76,18 +76,7 @@
               <a class="link-hidden" id="comment-submit">Submit</a>
               <hr>
           </div>
-          <div id="comments">
-{#              <div class="comment" onclick="hideComment(this);">#}
-{#                  <span>Love it</span>#}
-{#                 <div class="comment">#}
-{#                     <span>so do I</span>#}
-{#                                  <div class="comment">#}
-{#                     <span>so do I too</span>#}
-{#                 </div>#}
-{#                 </div>#}
-{#              </div>#}
-{#              <div class="comment" onclick="hideComment(this);"><span>You should add 1</span></div>#}
-          </div>
+          <div id="comments"></div>
       </div>
    </div>
    <div id="my-problem-modal" class="modal">
@@ -95,7 +84,7 @@
          <span class="close" id="close-my-problem-list">&times;</span>
          <h3>Problems</h3>
          {#  do not put whitespace or split up on this line!!!  #}
-         <ul class="problem-list" id="problem-list">{% for p in room['problems'] %}{% if p['sender_id'] == user['id'] %}<li class="problem-list-problem {% if p['solved'] %}solved{% endif %}"><div onclick="$('#my-problem-modal').hide();viewProblem({{ p['id'] }})">{{ p['title'] }}</div></li>{% endif %}{% endfor %}</ul>
+         <ul class="problem-list" id="my-problem-list">{% for p in room['problems'] %}{% if p['sender_id'] == user['id'] %}<li class="problem-list-problem {% if p['solved'] %}solved{% endif %}"><div onclick="$('#my-problem-modal').hide();viewProblem({{ p['id'] }})">{{ p['title'] }}</div></li>{% endif %}{% endfor %}</ul>
          {#  no whitespace for :empty message to work  #}
       </div>
    </div>
