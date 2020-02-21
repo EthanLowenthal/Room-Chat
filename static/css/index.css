@@ -1,0 +1,62 @@
+body {
+    background: var(--background-color);
+    color: white;
+    font-size: 20px;
+}
+html, body {
+    font-family: var(--font);
+    margin: 0;
+    height: 100%;
+}
+span, label, h1, h2, h3, h4, h5, h6, div {
+    color: var(--font-color);
+}
+*::selection {
+  background: var(--primary-color-transparent);
+}
+*::-moz-selection {
+  background: var(--primary-color-transparent);
+}
+
+*:focus {
+    outline: none;
+}
+
+/* for the "settings button in top right "*/
+
+#settings {
+    position: absolute;
+    font-size: 15px;
+    margin: 7px 15px;
+    color: #4c4c55;
+    right: 0;
+    cursor: pointer;
+}
+#settings:hover {
+    color: #9c9caf
+}
+
+/* back button in login screen */
+.back-btn {
+    cursor: pointer;
+    color: #4c4c55;
+}
+.back-btn:hover {
+    color: #9c9caf;
+}
+
+
+
+/* for centering */
+.parent {
+  position: relative;
+}
+
+.child {
+    /*margin-top: 40%;*/
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, 150%);
+}

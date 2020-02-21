@@ -1,35 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
-{% include 'head.html' %}
-
-    <title>Join Room</title>
-<body>
-<div class="parent">
-    <div class="child">
-        <form method="post" id="form">
-            <div id="class-code">
-                <span class="back-btn" onclick="window.location.href='/'">< back</span>
-
-                <div class="input-group">
-                    <span class="input-group-label">Class code:</span> <input type="text" name="code" placeholder="••••••••" class="text-large input-group-input" maxlength="6" size="8">
-                    <span class="button button-large input-group-button" onclick="document.querySelector('#class-code').style.display='none';document.querySelector('#name').style.display='block'">next</span>
-                </div>
-
-                {% if error|length > 0 %}
-                <br><br><span class="message">{{ error }}</span>
-                {% endif %}
-            </div>
-            <div id="name" style="display: none;">
-                <span class="back-btn" onclick="document.querySelector('#class-code').style.display='block';document.querySelector('#name').style.display='none'">< back</span>
-
-                <div class="input-group">
-                    <span class="input-group-label">Name:</span> <input type="text" name="name" class="text-large input-group-input" maxlength="20" size="15">
-                    <span onclick="document.getElementById('form').submit()" class="input-group-button button button-large">go</span>
-                </div>
-            </div>
-        </form>
-        </div>
-    </div>
-    </div>
-</body>
+	{% include 'head.html' %}
+	<title>Join Room</title>
+	<body>
+		<div class="parent">
+			<div class="child">
+				<form method="post" id="form">
+					<div id="class-code">
+						<span class="back-btn" onclick="window.location.href='/'">< back</span>
+						<div class="input-group">
+							<span class="input-group-label">Class code:</span> <input type="text" name="code" placeholder="••••••••" class="text-large input-group-input" maxlength="6" size="8">
+							<span class="button button-large input-group-button" onclick="document.querySelector('#class-code').style.display='none';document.querySelector('#name').style.display='block'">next</span>
+						</div>
+						{% if error|length > 0 %}
+						<br><br><span class="message">{{ error }}</span>
+						{% endif %}
+					</div>
+					<div id="name" style="display: none;">
+						<span class="back-btn" onclick="document.querySelector('#class-code').style.display='block';document.querySelector('#name').style.display='none'">< back</span>
+						<div class="input-group">
+							<span class="input-group-label">Name:</span> <input type="text" name="name" class="text-large input-group-input" maxlength="20" size="15">
+							<span onclick="document.getElementById('form').submit()" class="input-group-button button button-large">go</span>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		</div>
+	</body>
 </html>

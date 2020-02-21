@@ -1,0 +1,43 @@
+* {
+    --font: 'Abel', Sans-Serif;
+}
+[data-bg="dark"] {
+    --background-color: #1a1a1d;
+    --font-color: white;
+}
+[data-bg="dark"] #chat-wrapper {
+    background: aliceblue;
+}
+[data-bg="light"] #chat-wrapper {
+    box-shadow: inset 0px 0px 32px -17px rgba(0,0,0,0.75);
+}
+[data-bg="dark"] input[type="text"], [data-bg="dark"] textarea {
+    color: var(--font-color);
+}
+[data-bg="light"] input[type="text"], [data-bg="light"] textarea {
+    color: var(--font-color);
+    box-shadow: inset 0px 0px 32px -17px rgba(0,0,0,0.75);
+}
+[data-bg="light"] {
+    --background-color: #ffffff;
+    --font-color: black;
+}
+
+[data-theme="yellow"] {
+    --primary-color: #a78f40;
+    --primary-color-transparent: #a78f4090;
+    --primary-color-light: #cfbb75;
+    --primary-color-dark: #7a6818;
+}
+[data-theme="blue"] {
+    --primary-color: #5857f3;
+    --primary-color-transparent: #5337f390;
+    --primary-color-light: #715af3;
+    --primary-color-dark: #1909b0;
+}
+[data-theme="red"] {
+    --primary-color: #950740;
+    --primary-color-transparent: #95074090;
+    --primary-color-light: #d30a5b;
+    --primary-color-dark: #730021;
+}
