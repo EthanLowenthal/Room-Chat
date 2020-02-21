@@ -95,7 +95,17 @@ class Room(db.Model):
 
 db.create_all()
 
-
+room = Room(number=1, users=[])
+if room is None:
+	teacher = User(name="GRT", room_id=room.number, is_teacher=True)
+	room.users.append(teacher)
+	room.teacher = teacher
+	room.delay = 0
+	room.maxOcc = 100
+	room.showSolved = True
+	db.session.add(room)
+	db.session.add(teacher)
+	db.session.commit()
 
 @app.route('/')
 def index():
@@ -209,6 +219,28 @@ def create():
 
 		return redirect('/room/%s' %roomno)
 
+
+@app.route('/suggest', methods=['GET', 'POST'])
+def joinSuggestionRoom():
+	if request.method == 'GET':
+		return render_template("suggest.html")
+
+	elif request.method == 'POST':
+		room = Room.query.filter_by(number=1).first()
+		print(room.serialize)
+		if room.maxOcc <= len(room.users):
+			return render_template("suggest.html", error="We're receiving a lot of requests right now. Please try again later.")
+		user = User(name=request.form['name'], room_id=room.number, is_teacher=False)
+		room.users.append(user)
+		db.session.add(room)
+		db.session.add(user)
+		db.session.commit()
+		session['user'] = user.id
+
+		return redirect('/room/000001')
+
+	return render_template("suggest.html")
+
 @socketio.on('leave')
 def leave(json):
 	user = User.query.filter_by(id=int(session['user'])).first()
@@ -227,6 +259,7 @@ def leave(json):
 
 	db.session.commit()
 	session['user'] = None
+	
 	leave_room(json["room"])
 
 
