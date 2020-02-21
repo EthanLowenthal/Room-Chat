@@ -17,17 +17,19 @@ db.init_app(app)
 with app.app_context():
 	db.create_all()
 
-room = Room(number=1, users=[])
-if room is None:
-	teacher = User(name="GRT", room_id=room.number, is_teacher=True)
-	room.users.append(teacher)
-	room.teacher = teacher
-	room.delay = 0
-	room.maxOcc = 100
-	room.showSolved = True
-	db.session.add(room)
-	db.session.add(teacher)
-	db.session.commit()
+with app.app_context():
+	room = Room.query.filter_by(number=1).first()
+	if room is None:
+		room = Room(number=1, users=[])
+		teacher = User(name="GRT", room_id=room.number, is_teacher=True)
+		room.users.append(teacher)
+		room.teacher = teacher
+		room.delay = 0
+		room.maxOcc = 100
+		room.showSolved = True
+		db.session.add(room)
+		db.session.add(teacher)
+		db.session.commit()
 
 @app.route('/')
 def index():
