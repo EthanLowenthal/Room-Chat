@@ -1,82 +1,76 @@
 <head>
-    <link href="https://fonts.googleapis.com/css?family=Abel&display=swap" rel="stylesheet">
-
-    <link rel="stylesheet" type="text/css" href="/static/themes.css">
-    <link rel="stylesheet" type="text/css" href="/static/index.css">
-    <script src="/static/jquery-3.4.1.min.js"></script>
-
-    <meta charset="UTF-8">
+	<link href="https://fonts.googleapis.com/css?family=Abel&display=swap" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="/static/css/themes.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/index.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/button.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/input.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/modal.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/select.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/slider.css">
+	<script src="/static/js/jquery-3.4.1.min.js"></script>
+	<meta charset="UTF-8">
 </head>
 <div id="settings">settings</div>
-
-
 <div id="settings-modal" class="modal">
-  <div class="modal-content">
-    <span class="close" id="close-settings">&times;</span>
-    <div class="input-group" style="margin-top: 11px">
-    <span style="margin: 18px;margin-left:0">Theme</span>
-    <div class="select" style="width: 9em;">
-
-        <select id="theme-select" onchange="switchTheme(this)">
-                <option value="red">red</option>
-                <option value="blue">blue</option>
-                <option value="yellow">yellow</option>
-        </select>
-    </div>
-
+	<div class="modal-content">
+		<span class="close" id="close-settings">&times;</span>
+		<div class="input-group" style="margin-top: 11px">
+			<span style="margin: 18px;margin-left:0">Theme</span>
+			<div class="select" style="width: 9em;">
+				<select id="theme-select" onchange="switchTheme(this)">
+					<option value="red">red</option>
+					<option value="blue">blue</option>
+					<option value="yellow">yellow</option>
+				</select>
+			</div>
+		</div>
+		<div class="input-group" style="margin-top: 11px">
+			<span style="margin: 18px;margin-left:0">Background</span>
+			<div class="select" style="width: 9em;">
+				<select id="bg-select" onchange="switchBG(this)">
+					<option value="light">light</option>
+					<option value="dark">dark</option>
+				</select>
+			</div>
+		</div>
+	</div>
 </div>
-          <div class="input-group" style="margin-top: 11px">
-
-          <span style="margin: 18px;margin-left:0">Background</span>
-
-      <div class="select" style="width: 9em;">
-
-        <select id="bg-select" onchange="switchBG(this)">
-                <option value="light">light</option>
-                <option value="dark">dark</option>
-        </select>
-    </div>
-          </div>
-  </div>
-
-</div>
-
 <script type="text/javascript">
-    const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : null;
-    const currentBG = localStorage.getItem('bg') ? localStorage.getItem('bg') : null;
+	const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : null;
+	const currentBG = localStorage.getItem('bg') ? localStorage.getItem('bg') : null;
 
-    if (currentTheme) {
-        document.documentElement.setAttribute('data-theme', currentTheme);
-        $("#theme-select").val(currentTheme);
-    } else {
-        document.documentElement.setAttribute('data-theme', 'yellow');
-        $("#theme-select").val('yellow');
-    }
+	if (currentTheme) {
+	    document.documentElement.setAttribute('data-theme', currentTheme);
+	    $("#theme-select").val(currentTheme);
+	} else {
+	    document.documentElement.setAttribute('data-theme', 'yellow');
+	    $("#theme-select").val('yellow');
+	}
 
-    if (currentBG) {
-        document.documentElement.setAttribute('data-bg', currentBG);
-        $("#bg-select").val(currentBG);
-    } else {
-        document.documentElement.setAttribute('data-bg', 'dark');
-        $("#bg-select").val('dark');
-    }
+	if (currentBG) {
+	    document.documentElement.setAttribute('data-bg', currentBG);
+	    $("#bg-select").val(currentBG);
+	} else {
+	    document.documentElement.setAttribute('data-bg', 'dark');
+	    $("#bg-select").val('dark');
+	}
 
-    function switchTheme(elem) {
-        document.documentElement.setAttribute('data-theme', elem.value);
-        localStorage.setItem('theme', elem.value);
-    }
-    function switchBG(elem) {
-        document.documentElement.setAttribute('data-bg', elem.value);
-        localStorage.setItem('bg', elem.value);
-    }
+	function switchTheme(elem) {
+	    document.documentElement.setAttribute('data-theme', elem.value);
+	    localStorage.setItem('theme', elem.value);
+	}
+	function switchBG(elem) {
+	    document.documentElement.setAttribute('data-bg', elem.value);
+	    localStorage.setItem('bg', elem.value);
+	}
 </script>
 <script type="text/javascript">
-    var settings_modal = $("#settings-modal");
-    $("#settings").on("click", () => {settings_modal.show()});
-    $("#close-settings").on("click", () => {settings_modal.hide()});
-    window.addEventListener('click', function(event) {
-        if (event.target == settings_modal[0]) {
-            settings_modal.hide();
-        }
-    });
+	var settings_modal = $("#settings-modal");
+	$("#settings").on("click", () => {settings_modal.show()});
+	$("#close-settings").on("click", () => {settings_modal.hide()});
+	window.addEventListener('click', function(event) {
+	    if (event.target == settings_modal[0]) {
+	        settings_modal.hide();
+	    }
+	});
 </script>

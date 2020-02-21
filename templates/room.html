@@ -1,143 +1,153 @@
 <!DOCTYPE html>
 <html lang="en">
-   {% include 'head.html' %}
-   <link rel="stylesheet" type="text/css" href="/static/room.css">
-   <title>Room #{{ roomno }}</title>
-   <body>
-      <div>
-         <span class="room-number">{% if user['is_teacher']%}Room #: {{ roomno }}{% endif %}</span>
-         <!-- this leaves a blank span if there is no teacjer. this is on purpose becuase this is coded badly pls do no remove-->
-         <div class="room-info">Welcome, {{ user['name'] }} {% if not user['is_teacher']%}| Teacher: {{ room['teacher'] }}{% endif %}</div>
-         <div>
-            <div id="controls" style="margin-right: 10px;" class="button-group">
-               {% if user['is_teacher']%}
-               <a class="button button-medium" href="/delete/{{ roomno }}">Delete Room</a>
-               {% else %}
-               <a class="button button-medium" href="/">Leave Room</a>
-               {% endif %}
-               <a class="button button-medium" id="view-problem">View Problems</a>
-               <a class="button button-medium" id="my-problem">My Problems</a>
-               <a class="button button-medium" id="new-problem">New Problem</a>
-            </div>
-            <h1>Chat:</h1>
-            <div id="chat-wrapper" style="border-radius: 10px">
-               <div id="chat-box">
-               </div>
-               <div id="users-list">
-                  <span id="user-count">{{ room['users']|length }}</span> active users
-                  <hr>
-                  <div id="users">{% for u in room['users'] %}{{ u }}<br>
-                     {% endfor %}
-                  </div>
-               </div>
-            </div>
-            <form id="message-form" onsubmit="sendMessage();return false">
-               <div class="input-group">
-                  <input type="text" name="message" value="" id="message" class="text-large input-group-input" autocomplete="off">
-                  <span onclick="sendMessage()" class="input-group-button button button-large">send</span>
-               </div>
-               <!--<input type="hidden" name="user" value="{{ user['id'] }}">-->
-            </form>
-         </div>
-      </div>
-   </body>
-   <div id="new-problem-modal" class="modal">
-      <div class="modal-content">
-         <span class="close" id="close-new-problem">&times;</span>
-         <input id="problem-title" class="invisible-input" type="text" placeholder="Title">
-         <textarea id="problem-message" class="invisible-input" rows="4" cols="50" placeholder="Message ..."></textarea>
-         <button id="problem-submit" class="button button-medium">Submit</button>
-      </div>
-   </div>
-   <div id="view-problem-modal" class="modal">
-      <div class="modal-content" id="problem-list-content">
-         <span class="close" id="close-view-problem-list">&times;</span>
-         <h3>Problems</h3>
-         {#  do not put whitespace or split up on this line!!!  #}
-         <ul class="problem-list" id="problem-list">{% for p in room['problems'] %}<li data-id="{{ p["id"] }}" class="problem-list-problem {% if p['solved'] %}solved{% endif %}"><div onclick="viewProblem({{ p['id'] }})">{{ p['title'] }}</div><span class="problem-created-by">{{ p['sender']['name'] }}</span></li>{% endfor %}</ul>
-         {#  no whitespace for :empty message to work  #}
-      </div>
-      <div class="modal-content" id="view-problem-content">
-          <span class="close" id="close-view-problem-problem">&times;</span>
-          <span class="back-btn" onclick="$('#view-problem-content').hide();$('#problem-list-content').show();">< back</span>
-          <h2 id="view-problem-title"></h2>
-          <p id="view-problem-message"></p>
-          <hr>
-          <div class="button-group">
-             <div id="problem-controls">
-                <a class="link-hidden" onclick="problemSolved($('#problem-controls>a').parent().data('id'))">Mark as solved</a>
-                <a class="link-hidden" onclick="problemDeleted($('#problem-controls>a').parent().data('id'))">Delete problem</a>
-             </div>
-             <a class="link-hidden" onclick="$('#add-comment').toggle()">Add Comment</a>
-          </div>
-          <hr>
-          <div id="add-comment">
-              <textarea id="add-comment-message" class="invisible-input" rows="4" cols="50" placeholder="Comment ..."></textarea>
-              <a class="link-hidden" id="comment-submit">Submit</a>
-              <hr>
-          </div>
-          <div id="comments"></div>
-      </div>
-   </div>
-   <div id="my-problem-modal" class="modal">
-      <div class="modal-content" id="my-problem-list-content">
-         <span class="close" id="close-my-problem-list">&times;</span>
-         <h3>Problems</h3>
-         {#  do not put whitespace or split up on this line!!!  #}
-         <ul class="problem-list" id="my-problem-list">{% for p in room['problems'] %}{% if p['sender_id'] == user['id'] %}<li class="problem-list-problem {% if p['solved'] %}solved{% endif %}"><div onclick="$('#my-problem-modal').hide();viewProblem({{ p['id'] }})">{{ p['title'] }}</div></li>{% endif %}{% endfor %}</ul>
-         {#  no whitespace for :empty message to work  #}
-      </div>
-   </div>
-   <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
-   <script type="text/javascript" charset="utf-8">
-      replace = (s, a, b) => {return s.replace(a, b);};
+	{% include 'head.html' %}
+	<link rel="stylesheet" type="text/css" href="/static/css/room.css">
+	<title>Room #{{ roomno }}</title>
+	<body>
+		<div>
+			<span class="room-number">{% if user['is_teacher']%}Room #: {{ roomno }}{% endif %}</span>
+			<!-- this leaves a blank span if there is no teacjer. this is on purpose becuase this is coded badly pls do no remove-->
+			<div class="room-info">Welcome, {{ user['name'] }} {% if not user['is_teacher']%}| Teacher: {{ room['teacher'] }}{% endif %}</div>
+			<div>
+				<div id="controls" style="margin-right: 10px;" class="button-group">
+					{% if user['is_teacher']%}
+					<a class="button button-medium" href="/delete/{{ roomno }}">Delete Room</a>
+					{% else %}
+					<a class="button button-medium" href="/">Leave Room</a>
+					{% endif %}
+					<a class="button button-medium" id="view-problem">View Problems</a>
+					<a class="button button-medium" id="my-problem">My Problems</a>
+					<a class="button button-medium" id="new-problem">New Problem</a>
+				</div>
+				<h1>Chat:</h1>
+				<div id="chat-wrapper" style="border-radius: 10px">
+					<div id="chat-box">
+					</div>
+					<div id="users-list">
+						<span id="user-count">{{ room['users']|length }}</span> active users
+						<hr>
+						<div id="users">{% for u in room['users'] %}{{ u }}<br>
+							{% endfor %}
+						</div>
+					</div>
+				</div>
+				<form id="message-form" onsubmit="sendMessage();return false">
+					<div class="input-group">
+						<input type="text" name="message" value="" id="message" class="text-large input-group-input" autocomplete="off">
+						<span onclick="sendMessage()" class="input-group-button button button-large">send</span>
+					</div>
+					<!--<input type="hidden" name="user" value="{{ user['id'] }}">-->
+				</form>
+			</div>
+		</div>
+	</body>
+	<div id="new-problem-modal" class="modal">
+		<div class="modal-content">
+			<span class="close" id="close-new-problem">&times;</span>
+			<input id="problem-title" class="invisible-input" type="text" placeholder="Title">
+			<textarea id="problem-message" class="invisible-input" rows="4" cols="50" placeholder="Message ..."></textarea>
+			<button id="problem-submit" class="button button-medium">Submit</button>
+		</div>
+	</div>
+	<div id="view-problem-modal" class="modal">
+		<div class="modal-content" id="problem-list-content">
+			<span class="close" id="close-view-problem-list">&times;</span>
+			<h3>Problems</h3>
+			{#  do not put whitespace or split up on this line!!!  #}
+			<ul class="problem-list" id="problem-list">
+				{% for p in room['problems'] %}<li data-id="{{ p["id"] }}" class="problem-list-problem {% if p['solved'] %}solved{% endif %}">
+				<div onclick="viewProblem({{ p['id'] }})">{{ p['title'] }}</div>
+				<span class="problem-created-by">{{ p['sender']['name'] }}</span></li>{% endfor %}
+			</ul>
+			{#  no whitespace for :empty message to work  #}
+		</div>
+		<div class="modal-content" id="view-problem-content">
+			<span class="close" id="close-view-problem-problem">&times;</span>
+			<span class="back-btn" onclick="$('#view-problem-content').hide();$('#problem-list-content').show();">< back</span>
+			<h2 id="view-problem-title"></h2>
+			<p id="view-problem-message"></p>
+			<hr>
+			<div class="button-group">
+				<div id="problem-controls">
+					<a class="link-hidden" onclick="problemSolved($('#problem-controls>a').parent().data('id'))">Mark as solved</a>
+					<a class="link-hidden" onclick="problemDeleted($('#problem-controls>a').parent().data('id'))">Delete problem</a>
+				</div>
+				<a class="link-hidden" onclick="$('#add-comment').toggle()">Add Comment</a>
+			</div>
+			<hr>
+			<div id="add-comment">
+				<textarea id="add-comment-message" class="invisible-input" rows="4" cols="50" placeholder="Comment ..."></textarea>
+				<a class="link-hidden" id="comment-submit">Submit</a>
+				<hr>
+			</div>
+			<div id="comments"></div>
+		</div>
+	</div>
+	<div id="my-problem-modal" class="modal">
+		<div class="modal-content" id="my-problem-list-content">
+			<span class="close" id="close-my-problem-list">&times;</span>
+			<h3>Problems</h3>
+			{#  do not put whitespace or split up on this line!!!  #}
+			<ul class="problem-list" id="my-problem-list">
+				{% for p in room['problems'] %}{% if p['sender_id'] == user['id'] %}
+				<li class="problem-list-problem {% if p['solved'] %}solved{% endif %}">
+					<div onclick="$('#my-problem-modal').hide();viewProblem({{ p['id'] }})">{{ p['title'] }}</div>
+				</li>
+				{% endif %}{% endfor %}
+			</ul>
+			{#  no whitespace for :empty message to work  #}
+		</div>
+	</div>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
+	<script type="text/javascript" charset="utf-8">
+		replace = (s, a, b) => {return s.replace(a, b);};
 
-          var name = "{{ user['name'] }}";
-          var user_id =  "{{ user['id'] }}";
-          var room = "{{ roomno }}";
-          var problems_list = jQuery.parseJSON(`{{ room['problems']|tojson|safe }}`);
-          var problems = {};
-          problems_list.forEach(problem => {
-              problems[problem.id] = problem
-          })
-   </script>
-   <script src="/static/room.js"></script>
-   <script type="text/javascript">
-      var new_problem_modal = $("#new-problem-modal");
-      $("#new-problem").on("click", () => {new_problem_modal.show()});
-      $("#close-new-problem").on("click", () => {new_problem_modal.hide()});
-      window.addEventListener('click', function(event) {
-          if (event.target == new_problem_modal[0]) {
-              new_problem_modal.hide();
-          }
-      });
+		var name = "{{ user['name'] }}";
+		var user_id =  "{{ user['id'] }}";
+		var room = "{{ roomno }}";
+		var problems_list = jQuery.parseJSON(`{{ room['problems']|tojson|safe }}`);
+		var problems = {};
+		problems_list.forEach(problem => {
+		    problems[problem.id] = problem
+		})
+	</script>
+	<script src="/static/js/room.js"></script>
+	<script type="text/javascript">
+		var new_problem_modal = $("#new-problem-modal");
+		$("#new-problem").on("click", () => {new_problem_modal.show()});
+		$("#close-new-problem").on("click", () => {new_problem_modal.hide()});
+		window.addEventListener('click', function(event) {
+		    if (event.target == new_problem_modal[0]) {
+		        new_problem_modal.hide();
+		    }
+		});
 
-      var view_problem_modal = $("#view-problem-modal");
+		var view_problem_modal = $("#view-problem-modal");
 
-      $("#view-problem").on("click", () => {view_problem_modal.show()});
-      $("#close-view-problem-list").on("click", () => {view_problem_modal.hide()});
-      $("#close-view-problem-problem").on("click", () => {view_problem_modal.hide()});
-      window.addEventListener('click', function(event) {
-          if (event.target == view_problem_modal[0]) {
-              view_problem_modal.hide();
-          }
-      });
+		$("#view-problem").on("click", () => {view_problem_modal.show()});
+		$("#close-view-problem-list").on("click", () => {view_problem_modal.hide()});
+		$("#close-view-problem-problem").on("click", () => {view_problem_modal.hide()});
+		window.addEventListener('click', function(event) {
+		    if (event.target == view_problem_modal[0]) {
+		        view_problem_modal.hide();
+		    }
+		});
 
-      var my_problem_modal = $("#my-problem-modal");
+		var my_problem_modal = $("#my-problem-modal");
 
-      $("#my-problem").on("click", () => {my_problem_modal.show()});
-      $("#close-my-problem-list").on("click", () => {my_problem_modal.hide()});
-      window.addEventListener('click', function(event) {
-          if (event.target == my_problem_modal[0]) {
-              my_problem_modal.hide();
-          }
-      });
-   </script>
-   {% if room['showSolved'] %}
-   <style type="text/css">
-      .solved {
-      display: none;
-      }
-   </style>
-   {% endif %}
+		$("#my-problem").on("click", () => {my_problem_modal.show()});
+		$("#close-my-problem-list").on("click", () => {my_problem_modal.hide()});
+		window.addEventListener('click', function(event) {
+		    if (event.target == my_problem_modal[0]) {
+		        my_problem_modal.hide();
+		    }
+		});
+	</script>
+	{% if room['showSolved'] %}
+	<style type="text/css">
+		.solved {
+		display: none;
+		}
+	</style>
+	{% endif %}
 </html>

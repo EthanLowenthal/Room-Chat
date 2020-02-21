@@ -91,6 +91,7 @@ def join():
 
 		room = Room.query.filter_by(number=int(request.form['code'])).first()
 		user = User(name=request.form['name'], room_id=room.number, is_teacher=False)
+		user.room = room
 		room.users.append(user)
 		db.session.add(room)
 		db.session.add(user)
