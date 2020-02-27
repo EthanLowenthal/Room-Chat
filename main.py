@@ -161,7 +161,7 @@ def joinSuggestionRoom():
 		db.session.commit()
 		session['user'] = user.id
 
-		return redirect('/room/000001')
+		return redirect('/room/1')
 
 	return render_template("suggest.html")
 
