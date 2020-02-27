@@ -105,7 +105,7 @@
 		var name = "{{ user['name'] }}";
 		var user_id =  "{{ user['id'] }}";
 		var room = "{{ roomno }}";
-		var problems_list = jQuery.parseJSON(`{{ room['problems']|tojson|safe }}`);
+		var problems_list = jQuery.parseJSON(replace(`{{ room['problems']|tojson|safe }}`, "\n", ""));
 		var problems = {};
 		problems_list.forEach(problem => {
 		    problems[problem.id] = problem

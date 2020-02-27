@@ -45,15 +45,20 @@ class Problem(db.Model):
 
 	@property
 	def serialize(self):
-	   return {
-		   'id': self.id,
-		   'sender': self.sender.serialize,
-		   'sender_id': self.sender.id,
-		   'solved': self.solved,
-		   'message': self.message,
-		   'title': self.title,
-		   'comments': [comment.serialize for comment in self.comments]
-	   }
+		if self.sender is None: # sender is deleted
+			sender = {"id":9999, "name":"[Deleted]", "is_teacher":False}
+		else:
+			sender = self.sender.serialize
+
+		return {
+			'id': self.id,
+			'sender': sender,
+			'sender_id': sender["id"],
+			'solved': self.solved,
+			'message': self.message,
+			'title': self.title,
+			'comments': [comment.serialize for comment in self.comments]
+		}
 
 
 class Room(db.Model):

@@ -36,6 +36,12 @@ span, label, h1, h2, h3, h4, h5, h6, div {
     color: #9c9caf
 }
 
+#suggestion-link {
+    position: absolute;
+    bottom: 20px;
+    right: 28px;
+    opacity: 0.5;
+}
 /* back button in login screen */
 .back-btn {
     cursor: pointer;
